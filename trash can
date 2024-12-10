@@ -1,0 +1,45 @@
+#include <Servo.h>
+
+const int trigPin = 9;
+const int echoPin = 10;
+const int servoPin = 11; // Define the pin for the servo motor
+long duration;
+int distance;
+Servo myServo; // Create a Servo object
+
+void setup() {
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  myServo.attach(servoPin); // Attach the servo to the servo pin
+  myServo.write(0); // Start the servo at 0 degrees
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Send a pulse
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  
+  // Read the echo
+  duration = pulseIn(echoPin, HIGH);
+  
+  // Calculate the distance
+  distance = (duration / 2) / 29.1;
+
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  // Rotate the servo motor when distance is 50 cm
+  if (distance <= 30) {
+    myServo.write(180); // Rotate to 180 degrees
+    delay(5000);
+  } else {
+    myServo.write(0); // Rotate back to 0 degrees
+  }
+
+  delay(100); // Wait for 1 second before repeating
+}
